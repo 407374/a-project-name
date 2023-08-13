@@ -464,15 +464,20 @@
                     console.log('message: ' + JSON.stringify(message, null, 2));
                     $ionicActionSheet.show({
                         buttons: [{
-                            text: 'Copy Text'
+                            text: '复制消息'
                         }, {
-                            text: 'Delete Message'
+                            text: '删除消息'
                         }],
                         buttonClicked: function (index) {
                             switch (index) {
                                 case 0: // Copy Text
-                                    //cordova.plugins.clipboard.copy(message.text);
-
+                                    // cordova.plugins.clipboard.copy(message.text);
+                                    var aux = document.createElement("input");
+                                    aux.setAttribute("value", message.text);
+                                    document.body.appendChild(aux);
+                                    aux.select();
+                                    document.execCommand("copy");
+                                    document.body.removeChild(aux);
                                     break;
                                 case 1: // Delete
                                     // no server side secrets here :~)
