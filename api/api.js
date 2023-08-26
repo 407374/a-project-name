@@ -1,16 +1,16 @@
 const express = require("express");
 const app = express();
-const axios = require("axios").default;
+app.use('/', express.static(__dirname+'/public'));
+
+//controller
 const user = require('./controller/UserController');
-const path = require("path");
-const publicFilePath=path.join(__dirname, 'public');
-app.use('/', express.static(publicFilePath))
 
-const SQLite3 = require('sqlite3').verbose();
-// 创建一个数据库连接
-const db = new SQLite3.Database(publicFilePath+'/database.db');
+const axios = require("axios").default;
 
-//设置允许跨域访问该服务.
+const A = require('../api/Util/A');
+
+
+//设置允许跨域访问
 app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', '*');
@@ -20,18 +20,32 @@ app.all('*', function (req, res, next) {
 });
 
 app.get("/test", (req, res) => {
+    console.log(__dirname);
+    console.log(__filename);
+    res.send({
+        __dirname:__dirname,
+        __filename:__filename,
+        join:require("path").join(__dirname,'public'),
+        jia:require("path").join(__dirname)+'/public'
+    });
+});
 
 
-    db.all('select * from MNLG_STU_INFO where name=?',[],function (err,rows) {
+app.get("/db", (req, res) => {
+
+    console.log(__dirname);
+    console.log(__filename);
+    A.db.all("select * from MNLG_STU_INFO where STU_NAME='林耀光'",[],function (err,rows) {
+        // res.send(rows);
+        console.log(rows);
         res.send(rows);
     })
-
 });
 
 app.get("/search", (req, res) => {
 
     console.log(req.query.q)
-    db.all('select * from MNLG_STU_INFO where STU_NAME = ?',[req.query.q],function (err,rows) {
+    A.db.all('select * from MNLG_STU_INFO where STU_NAME = ?',[req.query.q],function (err,rows) {
         console.log(rows);
         for (let row of rows) {
             res.send({
@@ -39,15 +53,10 @@ app.get("/search", (req, res) => {
                 text:`身份证:${row.STU_CARDNO} 性别${row.STU_SEX} 联系电话${row.STU_PHONE}`,
             });
         }
-
-
     })
 
 });
 
-app.get("/path", (req, res) => {
-    res.send(publicFilePath);
-});
 
 app.get("/robot", (req, res) => {
     let key=req.query.key;
