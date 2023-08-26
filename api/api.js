@@ -4,6 +4,8 @@ app.use('/', express.static(__dirname+'/public'));
 
 //controller
 const user = require('./controller/UserController');
+const good = require('./controller/GoodController');
+
 
 const axios = require("axios").default;
 
@@ -28,6 +30,23 @@ app.get("/test", (req, res) => {
         join:require("path").join(__dirname,'public'),
         jia:require("path").join(__dirname)+'/public'
     });
+});
+
+app.get("/qq", (req, res) => {
+    //https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=407374
+
+    const options = {
+        method: 'GET',
+        url: 'https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=407374',
+    };
+    axios.request(options).then(function (response) {
+        let e=response.data;
+        return res.send(e);
+    }).catch(function (error) {
+        console.log(error);
+        return res.send('error');
+    });
+
 });
 
 
@@ -105,6 +124,8 @@ app.get("/robot", (req, res) => {
 
 
 app.use('/user', user);
+app.use('/good', good);
+
 
 module.exports = app;
 

@@ -1,7 +1,11 @@
 const SQLite3 = require('sqlite3').verbose();
+const db=new SQLite3.Database(__dirname+'/database.db');
 
 const A = {
-    db: new SQLite3.Database(__dirname+'/database.db'),
+    db,
+    test:function () {
+        console.log('A TEST LOG');
+    },
     //用户权限校验 校验通过返回true 校验失败返回false
     userVerify: function (req) {
         let token = req.headers.token;
@@ -20,6 +24,12 @@ const A = {
     //管理员权限校验 校验通过返回true 校验失败返回false
     adminVerify: function (req) {
         return req.headers.token == 'ABC5183340';
+    },
+    begin:function () {
+        db.run('BEGIN;');
+    },
+    commit:function () {
+        db.run('COMMIT;');
     },
 };
 
