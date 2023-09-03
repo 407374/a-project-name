@@ -10,9 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vercel/kv": "^0.2.2",
     "axios": "^1.4.0",
     "express": "^4.18.2",
+    "javascript-obfuscator": "^4.0.2",
     "sqlite3": "^5.1.6",
     "vercel": "^28.20.0"
+  },
+  "devDependencies": {
+    "@upstash/redis": "^1.22.0"
   }
 }

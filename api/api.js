@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-app.use('/', express.static(__dirname+'/public'));
+app.use('/', express.static(__dirname + '/public'));
 
 //controller
 const user = require('./controller/UserController');
@@ -21,55 +21,45 @@ app.all('*', function (req, res, next) {
     next();
 });
 
-app.get("/test", (req, res) => {
-    console.log(__dirname);
-    console.log(__filename);
-    res.send({
-        __dirname:__dirname,
-        __filename:__filename,
-        join:require("path").join(__dirname,'public'),
-        jia:require("path").join(__dirname)+'/public'
-    });
+
+app.get("/test", async (req, res) => {
+    res.send(await A.getAppAccessToken());
+
+    // var config = {
+    //     method: 'get',
+    //     url: 'https://logical-racer-33131.kv.vercel-storage.com/get/AppAccessToken',
+    //     headers: {
+    //         'Authorization': 'Bearer AYFrASQgMzMxZDY5ZWQtMjVjMS00NjAzLThjOTUtNDEzZTUxNTAzZTc2MGM1Y2Y3ZTNlZmVlNGFmMmJjZTY2MzJmMjEyYmM3NzE=',
+    //     }
+    // };
+    //
+    // axios(config)
+    //     .then(function (response) {
+    //         console.log(JSON.stringify(response.data));
+    //         res.send(response.data);
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
 });
 
-app.get("/qq", (req, res) => {
-    //https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=407374
+app.get("/null", async (req, res) => {
 
-    const options = {
-        method: 'GET',
-        url: 'https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=407374',
-    };
-    axios.request(options).then(function (response) {
-        let e=response.data;
-        return res.send(e);
-    }).catch(function (error) {
-        console.log(error);
-        return res.send('error');
-    });
+    A.AppAccessToken=null;
+    res.send('成功');
 
-});
+})
 
-
-app.get("/db", (req, res) => {
-
-    console.log(__dirname);
-    console.log(__filename);
-    A.db.all("select * from MNLG_STU_INFO where STU_NAME='林耀光'",[],function (err,rows) {
-        // res.send(rows);
-        console.log(rows);
-        res.send(rows);
-    })
-});
 
 app.get("/search", (req, res) => {
 
     console.log(req.query.q)
-    A.db.all('select * from MNLG_STU_INFO where STU_NAME = ?',[req.query.q],function (err,rows) {
+    A.db.all('select * from MNLG_STU_INFO where STU_NAME = ?', [req.query.q], function (err, rows) {
         console.log(rows);
         for (let row of rows) {
             res.send({
-                title:row.STU_NAME,
-                text:`身份证:${row.STU_CARDNO} 性别${row.STU_SEX} 联系电话${row.STU_PHONE}`,
+                title: row.STU_NAME,
+                text: `身份证:${row.STU_CARDNO} 性别${row.STU_SEX} 联系电话${row.STU_PHONE}`,
             });
         }
     })
@@ -78,8 +68,8 @@ app.get("/search", (req, res) => {
 
 
 app.get("/robot", (req, res) => {
-    let key=req.query.key;
-    if (!key){
+    let key = req.query.key;
+    if (!key) {
         return res.send('您所输入的KEY无效');
     }
     const options = {
@@ -104,13 +94,13 @@ app.get("/robot", (req, res) => {
         }
     };
     axios.request(options).then(function (response) {
-        let e=response.data;
-        if (e.results.length==0){
+        let e = response.data;
+        if (e.results.length == 0) {
             return res.send('您所输入的KEY无效');
-        }else if (e.results.length==1){
-            let s='';
+        } else if (e.results.length == 1) {
+            let s = '';
             for (let v of e.results[0].properties.VALUE.rich_text) {
-                s+=v.text.content;
+                s += v.text.content;
             }
             return res.send(s);
         }
